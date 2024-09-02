@@ -154,8 +154,7 @@ GLM_FUNC_QUALIFIER mat<4, 4, T, Q> lookAtRH(vec<3, T, Q> const& eye, vec<3, T, Q
 
 那么 games101 是
 
-$$
-M_{ortho}=\left(\begin{array}{cccc}
+$M_{ortho}=\left(\begin{array}{cccc}
 \frac{2}{r-l} & 0 & 0 & 0\\
 0 & \frac{2}{t-b} & 0 & 0\\
 0 & 0 & \frac{2}{n-f} & 0\\
@@ -165,31 +164,26 @@ M_{ortho}=\left(\begin{array}{cccc}
 0 & 1 & 0 & -\frac{t+b}{2}\\
 0 & 0 & 1 & -\frac{n+f}{2}\\
 0 & 0 & 0 & 1
-\end{array}\right)
-$$
+\end{array}\right)$
 
 注意，这个公式把 [f, n] 转成 [-1, 1] 的，那么原来是 f 比 n 小，现在也是 -1 比 1 小，所以没有改变手性
 
 frustum 的关系式是
 
-$$
-x' = n/z*x
-$$
+$x' = n/z*x$
 
-$$
-y' = n/z*y
-$$
+$y' = n/z*y$
 
-因此设计一个 frustum 挤压成正交长方体的矩阵，使得变换出来的 $$x,y,w$$ 的部分与这个关系式对应。对应的方法就是使得齐次坐标 $$w$$ 的位置放关系式的分母，也就是 $$z$$
+因此设计一个 frustum 挤压成正交长方体的矩阵，使得变换出来的 $x,y,w$ 的部分与这个关系式对应。对应的方法就是使得齐次坐标 $w$ 的位置放关系式的分母，也就是 $z$
 
-$$M_{persp2ortho} = \left(\begin{array}{cccc}
+$M_{persp2ortho} = \left(\begin{array}{cccc}
 n & 0 & 0 & 0\\
 0 & n & 0 & 0\\
 a_1 & a_2 & a_3 & a_4\\
 0 & 0 & 1 & 0
-\end{array}\right)$$
+\end{array}\right)$
 
-$$M_{persp2ortho}\left(\begin{array}{c}
+$M_{persp2ortho}\left(\begin{array}{c}
 x\\
 y\\
 z\\
@@ -199,13 +193,13 @@ nx\\
 ny\\
 ?\\
 z
-\end{array}\right)$$
+\end{array}\right)$
 
 为了求解未知数，有两个关系，一个是近平面上的点在压缩时不变，另一个是远平面的中心点在压缩时不变
 
 单独看“近平面上的点在压缩时不变”，这使得
 
-$$M_{persp2ortho}\left(\begin{array}{c}
+$M_{persp2ortho}\left(\begin{array}{c}
 x\\
 y\\
 n\\
@@ -215,15 +209,15 @@ nx\\
 ny\\
 n^2\\
 n
-\end{array}\right)$$
+\end{array}\right)$
 
 对任意 x,y 成立
 
-那么可以证出 $$a_1,a_2$$ 都是 0，因为 $$n^2$$ 与 $$x,y$$ 无关
+那么可以证出 $a_1,a_2$ 都是 0，因为 $n^2$ 与 $x,y$ 无关
 
 那么取近平面的中心点不变和远平面的中心点不变，得到两个式子
 
-$$M_{persp2ortho}\left(\begin{array}{c}
+$M_{persp2ortho}\left(\begin{array}{c}
 0\\
 0\\
 n\\
@@ -233,9 +227,9 @@ n\\
 0\\
 n^2\\
 n
-\end{array}\right)$$
+\end{array}\right)$
 
-$$M_{persp2ortho}\left(\begin{array}{c}
+$M_{persp2ortho}\left(\begin{array}{c}
 0\\
 0\\
 f\\
@@ -245,34 +239,34 @@ f\\
 0\\
 f^2\\
 f
-\end{array}\right)$$
+\end{array}\right)$
 
 即
 
-$$a_3 n + a_4 = n^2$$
-$$a_3 f + a_4 = f^2$$
+$a_3 n + a_4 = n^2$
+$a_3 f + a_4 = f^2$
 
 解得
 
-$$a_3 = n+f, a_4 = -nf$$
+$a_3 = n+f, a_4 = -nf$
 
 最终结果
 
-$$M_{persp2ortho} = \left(\begin{array}{cccc}
+$M_{persp2ortho} = \left(\begin{array}{cccc}
 n & 0 & 0 & 0\\
 0 & n & 0 & 0\\
 0 & 0 & f+n & -f\,n\\
 0 & 0 & 1 & 0
-\end{array}\right)$$
+\end{array}\right)$
 
 两者相乘可以得到
 
-$$M_{proj} = M_{ortho} * M_{persp2ortho} = \left(\begin{array}{cccc}
+$M_{proj} = M_{ortho} * M_{persp2ortho} = \left(\begin{array}{cccc}
 \frac{2\,n}{r-l} & 0 & \frac{l+r}{l-r} & 0\\
 0 & \frac{2\,n}{t-b} & \frac{b+t}{b-t} & 0\\
 0 & 0 & -\frac{f+n}{f-n} & \frac{2\,f\,n}{f-n}\\
 0 & 0 & 1 & 0
-\end{array}\right)$$
+\end{array}\right)$
 
 进行这个投影变换之后，原来是右手坐标的视图空间变为右手坐标的裁剪空间
 
@@ -286,7 +280,7 @@ OpenGL 的公式中要求 n,f 都是距离，所以都是正值
 
 那么正交投影矩阵
 
-$$M_{ortho}=\left(\begin{array}{cccc}
+$M_{ortho}=\left(\begin{array}{cccc}
 \frac{2}{r-l} & 0 & 0 & 0\\
 0 & \frac{2}{t-b} & 0 & 0\\
 0 & 0 & \frac{2}{n-f} & 0\\
@@ -296,25 +290,25 @@ $$M_{ortho}=\left(\begin{array}{cccc}
 0 & 1 & 0 & -\frac{t+b}{2}\\
 0 & 0 & 1 & \frac{f+n}{2}\\
 0 & 0 & 0 & 1
-\end{array}\right)$$
+\end{array}\right)$
 
 frustum 的关系式是
 
-$$x' = -n/z*x$$
-$$y' = -n/z*y$$
+$x' = -n/z*x$
+$y' = -n/z*y$
 
 因为这里的 z 是负值，所以要加负号表示距离
 
 设计压缩矩阵
 
-$$M_{persp2ortho} = \left(\begin{array}{cccc}
+$M_{persp2ortho} = \left(\begin{array}{cccc}
 -n & 0 & 0 & 0\\
 0 & -n & 0 & 0\\
 0 & 0 & a_3 & a_4\\
 0 & 0 & 1 & 0
-\end{array}\right)$$
+\end{array}\right)$
 
-$$M_{persp2ortho}\left(\begin{array}{c}
+$M_{persp2ortho}\left(\begin{array}{c}
 x\\
 y\\
 z\\
@@ -324,11 +318,11 @@ z\\
 -ny\\
 ?\\
 z
-\end{array}\right)$$
+\end{array}\right)$
 
 那么取近平面的中心点不变和远平面的中心点不变，得到两个式子
 
-$$M_{persp2ortho}\left(\begin{array}{c}
+$M_{persp2ortho}\left(\begin{array}{c}
 0\\
 0\\
 -n\\
@@ -338,9 +332,9 @@ $$M_{persp2ortho}\left(\begin{array}{c}
 0\\
 n^2\\
 -n
-\end{array}\right)$$
+\end{array}\right)$
 
-$$M_{persp2ortho}\left(\begin{array}{c}
+$M_{persp2ortho}\left(\begin{array}{c}
 0\\
 0\\
 -f\\
@@ -350,43 +344,43 @@ $$M_{persp2ortho}\left(\begin{array}{c}
 0\\
 f^2\\
 -f
-\end{array}\right)$$
+\end{array}\right)$
 
 即
 
-$$-a_3 n + a_4 = n^2$$
-$$-a_3 f + a_4 = f^2$$
+$-a_3 n + a_4 = n^2$
+$-a_3 f + a_4 = f^2$
 
 解得
 
-$$a_3 = -(n+f), a_4 = -nf$$
+$a_3 = -(n+f), a_4 = -nf$
 
 最终结果
 
-$$M_{persp2ortho} = \left(\begin{array}{cccc}
+$M_{persp2ortho} = \left(\begin{array}{cccc}
 -n & 0 & 0 & 0\\
 0 & -n & 0 & 0\\
 0 & 0 & -(f+n) & -f\,n\\
 0 & 0 & 1 & 0
-\end{array}\right)$$
+\end{array}\right)$
 
 两者相乘可以得到
 
-$$M_{proj} = M_{ortho} * M_{persp2ortho} = \left(\begin{array}{cccc}
+$M_{proj} = M_{ortho} * M_{persp2ortho} = \left(\begin{array}{cccc}
 \frac{2\,n}{l-r} & 0 & \frac{l+r}{l-r} & 0\\
 0 & \frac{2\,n}{b-t} & \frac{b+t}{b-t} & 0\\
 0 & 0 & \frac{f+n}{f-n} & \frac{2\,f\,n}{f-n}\\
 0 & 0 & 1 & 0
-\end{array}\right)$$
+\end{array}\right)$
 
 但是还是和 OpenGL 的公式搭不上
 
-$$M_{proj} = M_{ortho} * M_{persp2ortho} = \left(\begin{array}{cccc}
+$M_{proj} = M_{ortho} * M_{persp2ortho} = \left(\begin{array}{cccc}
 \frac{2\,n}{r-l} & 0 & \frac{l+r}{r-l} & 0\\
 0 & \frac{2\,n}{t-b} & \frac{b+t}{t-b} & 0\\
 0 & 0 & -\frac{f+n}{f-n} & -\frac{2\,f\,n}{f-n}\\
 0 & 0 & -1 & 0
-\end{array}\right)$$
+\end{array}\right)$
 
 观察发现我自己推出来的矩阵乘以 -1 就是 OpenGL 的公式
 
@@ -398,19 +392,19 @@ $$M_{proj} = M_{ortho} * M_{persp2ortho} = \left(\begin{array}{cccc}
 
 重新推一下，frustum 的关系式是
 
-$$x' = n/(-z)*x$$
-$$y' = n/(-z)*y$$
+$x' = n/(-z)*x$
+$y' = n/(-z)*y$
 
 设计压缩矩阵
 
-$$M_{persp2ortho} = \left(\begin{array}{cccc}
+$M_{persp2ortho} = \left(\begin{array}{cccc}
 n & 0 & 0 & 0\\
 0 & n & 0 & 0\\
 0 & 0 & a_3 & a_4\\
 0 & 0 & -1 & 0
-\end{array}\right)$$
+\end{array}\right)$
 
-$$M_{persp2ortho}\left(\begin{array}{c}
+$M_{persp2ortho}\left(\begin{array}{c}
 x\\
 y\\
 z\\
@@ -420,11 +414,11 @@ nx\\
 ny\\
 ?\\
 -z
-\end{array}\right)$$
+\end{array}\right)$
 
 那么取近平面的中心点不变和远平面的中心点不变，得到两个式子
 
-$$M_{persp2ortho}\left(\begin{array}{c}
+$M_{persp2ortho}\left(\begin{array}{c}
 0\\
 0\\
 -n\\
@@ -434,9 +428,9 @@ $$M_{persp2ortho}\left(\begin{array}{c}
 0\\
 -n^2\\
 n
-\end{array}\right)$$
+\end{array}\right)$
 
-$$M_{persp2ortho}\left(\begin{array}{c}
+$M_{persp2ortho}\left(\begin{array}{c}
 0\\
 0\\
 -f\\
@@ -446,25 +440,25 @@ $$M_{persp2ortho}\left(\begin{array}{c}
 0\\
 -f^2\\
 f
-\end{array}\right)$$
+\end{array}\right)$
 
 即
 
-$$-a_3 n + a_4 = -n^2$$
-$$-a_3 f + a_4 = -f^2$$
+$-a_3 n + a_4 = -n^2$
+$-a_3 f + a_4 = -f^2$
 
 解得
 
-$$a_3 = n+f, a_4 = nf$$
+$a_3 = n+f, a_4 = nf$
 
 最终结果
 
-$$M_{persp2ortho} = \left(\begin{array}{cccc}
+$M_{persp2ortho} = \left(\begin{array}{cccc}
 n & 0 & 0 & 0\\
 0 & n & 0 & 0\\
 0 & 0 & f+n & f\,n\\
 0 & 0 & -1 & 0
-\end{array}\right)$$
+\end{array}\right)$
 
 That's all. 可以看到投影矩阵和之前的差在乘以一个负号，最终算出来的就是 OpenGL 的公式了。
 
@@ -517,12 +511,12 @@ Mproj = simplify(Mproj)
 
 得到的结果一样
 
-$$M_{proj} = \left(\begin{array}{cccc}
+$M_{proj} = \left(\begin{array}{cccc}
 \frac{1}{\mathrm{aspect}\,\tan \left(\frac{\mathrm{fovy}}{2}\right)} & 0 & 0 & 0\\
 0 & \frac{1}{\tan \left(\frac{\mathrm{fovy}}{2}\right)} & 0 & 0\\
 0 & 0 & -\frac{\mathrm{zFar}+\mathrm{zNear}}{\mathrm{zFar}-\mathrm{zNear}} & -\frac{2\,\mathrm{zFar}\,\mathrm{zNear}}{\mathrm{zFar}-\mathrm{zNear}}\\
 0 & 0 & -1 & 0
-\end{array}\right)$$
+\end{array}\right)$
 
 这就是所谓的齐次坐标里面放 z 还是 -z 会导致的公式的不同
 
@@ -536,7 +530,7 @@ n, f 为正
 
 [b, t] 映射到 [1, -1], [-n, -f] 映射到 [0, 1]
 
-$$
+$
 M_{ortho}=\left(\begin{array}{cccc}
 \frac{2}{r-l} & 0 & 0 & 0\\
 0 & \frac{2}{b-t} & 0 & 0\\
@@ -548,16 +542,16 @@ M_{ortho}=\left(\begin{array}{cccc}
 0 & 0 & 1 & n\\
 0 & 0 & 0 & 1
 \end{array}\right)
-$$
+$
 
 沿用之前推 OpenGL 推出来的压缩矩阵
 
-$$M_{persp2ortho} = \left(\begin{array}{cccc}
+$M_{persp2ortho} = \left(\begin{array}{cccc}
 n & 0 & 0 & 0\\
 0 & n & 0 & 0\\
 0 & 0 & f+n & f\,n\\
 0 & 0 & -1 & 0
-\end{array}\right)$$
+\end{array}\right)$
 
 Matlab 代入
 
@@ -587,12 +581,12 @@ Mproj = simplify(Mproj)
 
 Matlab 结果
 
-$$M_{proj} = \left(\begin{array}{cccc}
+$M_{proj} = \left(\begin{array}{cccc}
 \frac{1}{\mathrm{aspect}\,\tan \left(\frac{\mathrm{fovy}}{2}\right)} & 0 & 0 & 0\\
 0 & -\frac{1}{\tan \left(\frac{\mathrm{fovy}}{2}\right)} & 0 & 0\\
 0 & 0 & -\frac{\mathrm{zFar}}{\mathrm{zFar}-\mathrm{zNear}} & -\frac{\mathrm{zFar}\,\mathrm{zNear}}{\mathrm{zFar}-\mathrm{zNear}}\\
 0 & 0 & -1 & 0
-\end{array}\right)$$
+\end{array}\right)$
 
 得到的结果与 `perspectiveRH_ZO` 确实仅仅在 [1][1] 差一个负号
 

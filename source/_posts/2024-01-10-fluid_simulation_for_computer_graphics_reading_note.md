@@ -24,17 +24,17 @@ http://rlguy.com/gridfluidsim/
 
 What is the pressure? Whatever it takes to keep the fluid at constant volume.
 
-It measures the imbalance in pressure at the position of the particle is simply to take the negative gradient of pressure $$-\nabla p$$
+It measures the imbalance in pressure at the position of the particle is simply to take the negative gradient of pressure $-\nabla p$
 
 Viscosity force tries to resist deforming. It tries to make our particle move at the average velocity of the nearby particle.
 
-The differential operator that measures how far a quantity is from the average around it is Laplacian operator $$\nabla \cdot \nabla$$, so viscosity force is $$\nabla \cdot \nabla u$$
+The differential operator that measures how far a quantity is from the average around it is Laplacian operator $\nabla \cdot \nabla$, so viscosity force is $\nabla \cdot \nabla u$
 
 ### Incompressibility
 
-Incompressibility means volume doesn't change. It is $$\iiint_{\Omega} \nabla \cdot u = 0$$. How to get NS eq $$\nabla \cdot u = 0$$?
+Incompressibility means volume doesn't change. It is $\iiint_{\Omega} \nabla \cdot u = 0$. How to get NS eq $\nabla \cdot u = 0$?
 
-The integration should be true for any choice of $$\Omega$$, any region of fluid. The only continuous function that integrates to zero independent of the region of integration is zero itself. Thus the integrand has to be zero everywhere.
+The integration should be true for any choice of $\Omega$, any region of fluid. The only continuous function that integrates to zero independent of the region of integration is zero itself. Thus the integrand has to be zero everywhere.
 
 One of the tricky parts of simulating incompressible fluids is making sure that the velocity field stays divergence-free. This is where the pressure comes in.
 
@@ -72,45 +72,39 @@ But bubbles may immediately collapse (there's no pressure inside to stop them lo
 
 ### Splitting
 
-Split $$\dfrac{\mathrm{d}q}{\mathrm{d}t} = f(q) + g(q)$$ into:
+Split $\dfrac{\mathrm{d}q}{\mathrm{d}t} = f(q) + g(q)$ into:
 
-$$
-\begin{aligned}
+$\begin{aligned}
   \widetilde{q} & = q^n + \Delta t f(q^n) \\
   q^{n+1} & = \widetilde{q} + \Delta t g(\widetilde{q})
-\end{aligned}
-$$
+\end{aligned}$
 
 Use Taylor series to prove firse-order-accurate.
 
 Simpler equation has simpler method.
 
-$$
-\begin{aligned}
+$\begin{aligned}
   \widetilde{q} & = F(\Delta t, q^n) \\
   q^{n+1} & = G(\Delta t, \widetilde{q})
-\end{aligned}
-$$
+\end{aligned}$
 
-We have better method $$F,G$$.
+We have better method $F,G$.
 
-$$F,G$$ may be in parallel or not.
+$F,G$ may be in parallel or not.
 
 ### Splitting the Fluid Equations
 
-$$
-\begin{aligned}
+$\begin{aligned}
   \dfrac{\mathrm{D}q}{\mathrm{D}t} = 0 &, advection \\
   \dfrac{\partial{u}}{\partial{t}} = g &, body\ force \\
   \dfrac{\partial{u}}{\partial{t}} + \dfrac{1}{\rho}\nabla p =0 &, pressure/incompressibility
-\end{aligned}
-$$
+\end{aligned}$
 
-In advection part, quantity $$q$$ is anything, not just velocity $$v$$.
+In advection part, quantity $q$ is anything, not just velocity $v$.
 
-For body force part, forward euler $$u = u + \Delta t g$$ is fine.
+For body force part, forward euler $u = u + \Delta t g$ is fine.
 
-Pressure part is to make sure $$\nabla \cdot u = 0$$. Here we will project velocity and enforce the solid wall boundary conditions.
+Pressure part is to make sure $\nabla \cdot u = 0$. Here we will project velocity and enforce the solid wall boundary conditions.
 
 Advection should only be done in a divergence-free velocity field. So sequence matters.
 
@@ -124,7 +118,7 @@ Advection should only be done in a divergence-free velocity field. So sequence m
 
 Find a minimal time step that suits all steps: advect, add body force, project.
 
-If frame interval $$t_{frame}$$ > simulation delta time $$\Delta t$$, then run simulation multiple times, until total simulation time >= $$t_{frame}$$.
+If frame interval $t_{frame}$ > simulation delta time $\Delta t$, then run simulation multiple times, until total simulation time >= $t_{frame}$.
 
 ### MAC Grid
 
@@ -132,19 +126,19 @@ If frame interval $$t_{frame}$$ > simulation delta time $$\Delta t$$, then run s
 
 First-order central difference:
 
-$$(\dfrac{\partial{q}}{\partial{x}})_{i} \approx \dfrac{q_{i+1}-q_{i-1}}{2\Delta x}$$
+$(\dfrac{\partial{q}}{\partial{x}})_{i} \approx \dfrac{q_{i+1}-q_{i-1}}{2\Delta x}$
 
 First-order forward or backward difference:
 
-$$(\dfrac{\partial{q}}{\partial{x}})_{i} \approx \dfrac{q_{i+1}-q_{i}}{\Delta x}$$
+$(\dfrac{\partial{q}}{\partial{x}})_{i} \approx \dfrac{q_{i+1}-q_{i}}{\Delta x}$
 
 First-order central difference has a major problem in that the derivative estimate at grid point i completely ignores the value qi sampled there.
 
-Why ignoring qi is terrible: jagged function has more probability to be estimate as constant function. For example, $$q_i = {(-1)}^{i}$$ to produce $$(\dfrac{\partial{q}}{\partial{x}})_{i} = 0$$ using first-order central difference, but not using first-order forward or backward difference.
+Why ignoring qi is terrible: jagged function has more probability to be estimate as constant function. For example, $q_i = {(-1)}^{i}$ to produce $(\dfrac{\partial{q}}{\partial{x}})_{i} = 0$ using first-order central difference, but not using first-order forward or backward difference.
 
 I think it is similar with Undersampling. Nyquist-Shannon sample Theorem says that for an accurate representation of the baseband signal, the sample rate must be at least twice the highest frequency component. Aliasing happens when the sampling rate falls below this limit (the Nyquist Rate).
 
-Here you can analogize aliasing to $$(\dfrac{\partial{q}}{\partial{x}})_{i}$$ becoming close to 0.
+Here you can analogize aliasing to $(\dfrac{\partial{q}}{\partial{x}})_{i}$ becoming close to 0.
 
 <figure style="width: 300px" class="align-center">
 <img src="/images/fluid_sim_reading_note/Undersampling.svg">
@@ -159,11 +153,11 @@ Why to use MAC Grid: we can use accurate central differences for the pressure gr
 
 Pressure is defined at center of cell.
 
-$$u$$ is defined at center of X plane of cell.
+$u$ is defined at center of X plane of cell.
 
-$$v$$ is defined at center of Y plane of cell.
+$v$ is defined at center of Y plane of cell.
 
-$$w$$ is defined at center of Z plane of cell.
+$w$ is defined at center of Z plane of cell.
 
 <figure style="width: 700px" class="align-center">
 <img src="/images/fluid_sim_reading_note/mac_velocity_diagram-large-1.png">
@@ -185,38 +179,35 @@ $$w$$ is defined at center of Z plane of cell.
 <figcaption align = "center">Fig: One cell from the three-dimensional MAC grid</figcaption>
 </figure>
 
-If pressure grid has dimensions $$nx \times ny \times nz$$, then $$u$$ grid has dimensions $$(nx + 1) \times ny \times nz$$, $$v$$ grid has dimensions $$nx \times (ny + 1) \times nz$$, $$w$$ grid has dimensions $$nx \times ny \times (nz + 1)$$.
+If pressure grid has dimensions $nx \times ny \times nz$, then $u$ grid has dimensions $(nx + 1) \times ny \times nz$, $v$ grid has dimensions $nx \times (ny + 1) \times nz$, $w$ grid has dimensions $nx \times ny \times (nz + 1)$.
 
 The half-index notation works well for describing velocity components in this document, but does not translate well into a programming implementation where arrays use integer indexing. The following table demonstrates how half-index notation will be translated into classic array integer indexing:
 
-|    Half Index     | Integer Index  |
-| :---------------: | :------------: |
-| $$u_{i-1/2,j,k}$$ |  $$u(i,j,k)$$  |
-| $$u_{i+1/2,j,k}$$ | $$u(i+1,j,k)$$ |
-| $$v_{i,j-1/2,k}$$ |  $$v(i,j,k)$$  |
-| $$v_{i,j+1/2,k}$$ | $$v(i,j+1,k)$$ |
-| $$w_{i,j,k-1/2}$$ |  $$w(i,j,k)$$  |
-| $$w_{i,j,k+1/2}$$ | $$w(i,j,k+1)$$ |
+|   Half Index    | Integer Index |
+| :-------------: | :-----------: |
+| $u_{i-1/2,j,k}$ |  $u(i,j,k)$   |
+| $u_{i+1/2,j,k}$ | $u(i+1,j,k)$  |
+| $v_{i,j-1/2,k}$ |  $v(i,j,k)$   |
+| $v_{i,j+1/2,k}$ | $v(i,j+1,k)$  |
+| $w_{i,j,k-1/2}$ |  $w(i,j,k)$   |
+| $w_{i,j,k+1/2}$ | $w(i,j,k+1)$  |
 
 Using staggered grid, we can get unbiased second-order accuracy of a central difference:
 
-$$
-\begin{align*}  
+$\begin{align*}  
     \left( \frac{\partial u}{\partial x} \right)_{i,\ j,\ k } \approx & \ 
     \frac{u_{i{+}1/2,\ j,\ k} - u_{i{-}1/2,\ j,\ k}}{\Delta x}, \\[1.5ex]
     \left( \frac{\partial v}{\partial y} \right)_{i,\ j,\ k } \approx & \ 
     \frac{v_{i,\ j{+}1/2,\ k} - v_{i,\ j{-}1/2,\ k}}{\Delta x}, \\[1.5ex]
     \left( \frac{\partial w}{\partial z} \right)_{i,\ j,\ k } \approx & \ 
     \frac{w_{i,\ j,\ k{+}1/2} - w_{i,\ j,\ k{-}1/2}}{\Delta x}
-\end{align*}
-$$
+\end{align*}$
 
 The staggered MAC grid is perfectly suited for handling pressure and incompressibility, but it's frankly a pain for other uses. For example, if we actually want to evaluate the full velocity vector somewhere, we will always need to use some kind of interpolation even if we're looking at a grid point.
 
 For an arbitrary location:
 
-$$
-\begin{align}
+$\begin{align}
     \vec{u}_{i,\ j,\ k}\ = & \  \left( \frac{u_{i{-}1/2,\ j,\ k} + u_{i{+}1/2,\ j,\ k}}{2}, \ 
     \frac{v_{i,\ j{-}1/2,\ k} + v_{i,\ j{+}1/2,\ k}}{2}, \ 
     \frac{w_{i,\ j,\ k{-}1/2} + w_{i,\ j,\ k{+}1/2}}{2} 
@@ -254,8 +245,7 @@ $$
     \end{align}}{4}, \ 
     w_{i,\ j,\ k{+}1/2}
     \right) \\[1.5ex]
-\end{align}
-$$
+\end{align}$
 
 ### Dynamic Sparse Grids
 
@@ -271,7 +261,7 @@ Problem:
 
 2. Memory access efficiency on modren hardware
 
-    Assume that grid is row-major layout, and row order is $$i,j,k$$. Distance between $$(i,j,k)$$ and $$(i+1,j,k)$$ will be $$ny \times nz$$
+    Assume that grid is row-major layout, and row order is $i,j,k$. Distance between $(i,j,k)$ and $(i+1,j,k)$ will be $ny \times nz$
 
     So we can expect more page faults and cache misses.
 
@@ -279,7 +269,7 @@ Problem:
 
     For example: river, waterfall, pouring water...
 
-Using hash table to map index to a large virtual grid (such as $$2^{32}$$ along each dimension by signed 32-bit integers in each coordinate). The grid is large enough so you don't need to move grid origin. 
+Using hash table to map index to a large virtual grid (such as $2^{32}$ along each dimension by signed 32-bit integers in each coordinate). The grid is large enough so you don't need to move grid origin. 
 
 Since we only store the blocks of the grid we care about, this is a sparse structure and we don't waste storage or processing on voxels far from the action..
 
@@ -305,7 +295,7 @@ About stability region of forward Euler. The eigenvalues of the Jacobian generat
 
 Difference seems like pretty accurate estimate of the derivative, but it has dispersion problem.
 
-High-frequency jagged components of quantity, like $$(−1)^i$$, erroneously register as having zero or near-zero spatial derivative, and so don't get evolved forward in time or at least move much more slowly than the velocity u they should move at.
+High-frequency jagged components of quantity, like $(−1)^i$, erroneously register as having zero or near-zero spatial derivative, and so don't get evolved forward in time or at least move much more slowly than the velocity u they should move at.
 
 Meanwhile the low frequency components are handled accurately and move at almost exactly the right speed u. Thus the low frequency components end up separating out from the high-frequency components, and you are left with all sorts of strange high-frequency wiggles and oscillations appearing and persisting that shouldn't be there!
 
@@ -357,7 +347,7 @@ Semi-Lagrangian Advection is unconditionally stable, becuase new value is copied
 
 From view of domain of dependence, the numerical domain of dependence, at least in the limit, must contain the true domain of dependence if we want to get the correct answer.
 
-CFL condition depicts how small your $$\Delta t, \Delta x$$ is can you say close to limit.
+CFL condition depicts how small your $\Delta t, \Delta x$ is can you say close to limit.
 
 CFL condition: to make result accurate
 
@@ -386,31 +376,27 @@ Solution: use sharper interpolation
 
 Cubic Interpolation:
 
-$$
-\begin{align}
+$\begin{align}
     f(q_{i-1},\ q_{i},\ q_{i+1},\ q_{i+2},\ x) = \ &[-\dfrac{1}{3}s+\dfrac{1}{2}s^2-\dfrac{1}{6}s^3]q_{i-1} \\
     &+ [1-s^2+\dfrac{1}{2}(s^3-s)]q_{i} \\
     &+ [s+\dfrac{1}{2}(s^2-s^3)]q_{i+1} \\
     &+ [\dfrac{1}{6}(s^3-s)]q_{i+2}
-\end{align}
-$$
+\end{align}$
 
-Where $$s$$ means fraction between grid points $$x_i$$ and $$x_{i+1}$$. So $$s=-1$$ means $$x_{i-1}$$, $$s=0$$ means $$x_{i}$$, $$s=1$$ means $$x_{i+1}$$, $$s=2$$ means $$x_{i+2}$$.
+Where $s$ means fraction between grid points $x_i$ and $x_{i+1}$. So $s=-1$ means $x_{i-1}$, $s=0$ means $x_{i}$, $s=1$ means $x_{i+1}$, $s=2$ means $x_{i+2}$.
 
-It can be derived from Lagrange Interpolation, base point are $$(-1, q_{i-1})$$, $$(0, q_{i})$$, $$(1, q_{i+1})$$, $$(2, q_{i+2})$$.
+It can be derived from Lagrange Interpolation, base point are $(-1, q_{i-1})$, $(0, q_{i})$, $(1, q_{i+1})$, $(2, q_{i+2})$.
 
 This algorithm also has another form. Derived from another way [Paul Bourke's Cubic Interpolation Page](http://www.paulinternet.nl/?page=bicubic)
 
-$$
-\begin{align}
+$\begin{align}
     f(p_0,\ p_1,\ p_2,\ p_3,\ x) = \ &(-\tfrac{1}{2}p_0 + \tfrac{3}{2}p_1 - \tfrac{3}{2}p_2 + \tfrac{1}{2}p_3)x^3 \\
     &+ (p_0 - \tfrac{5}{2}p_1 + 2p_2 - \tfrac{1}{2}p_3)x^2 \\
     &+ (-\tfrac{1}{2}p_0 + \tfrac{1}{2}p_2)x \\
     &+ p_1
-\end{align}
-$$
+\end{align}$
 
-Where $$x$$ is same as $$s$$ below.
+Where $x$ is same as $s$ below.
 
 In two or three dimensions, you can cubic interpolation sequentially.
 
@@ -459,17 +445,17 @@ The weighting coefficients may be negative.
 <figcaption align = "center">Fig: SDF Field. Taken from "Fluid Engine Development"</figcaption>
 </figure>
 
-$$\vert\vert \nabla \phi(x) \vert\vert = 1$$.
+$\vert\vert \nabla \phi(x) \vert\vert = 1$.
 
-+ outside the geometry, $$-\nabla \phi(x)$$ is the unit-length vector pointing towards the closest point on the surface
++ outside the geometry, $-\nabla \phi(x)$ is the unit-length vector pointing towards the closest point on the surface
 
-+ inside the geometry, $$\nabla \phi(x)$$ is the unit-length vector pointing towards the closest point on the surface
++ inside the geometry, $\nabla \phi(x)$ is the unit-length vector pointing towards the closest point on the surface
 
-+ and on the surface, $$\nabla \phi(x)$$ is the unit-length outward-pointing normal.
++ and on the surface, $\nabla \phi(x)$ is the unit-length outward-pointing normal.
 
-This means $$x - \phi(x)\nabla \phi(x)$$ is the closest point on the surface for any point $$x$$.
+This means $x - \phi(x)\nabla \phi(x)$ is the closest point on the surface for any point $x$.
 
-SDF can also be defined as $$\phi(x) = 0$$ at boundary.
+SDF can also be defined as $\phi(x) = 0$ at boundary.
 
 SDF can handle topological change easily. To merge two surface, just get minimum value of two SDF.
 
@@ -491,39 +477,39 @@ Here we prove why the value on the surface is correct.
 
 We can use the advection equation (Equation 3.23) with extra source term to model this propagation problem.
 
-$$\dfrac{\partial{\phi}}{\partial{\tau}}+\mathbf{u} \cdot \nabla \phi = 1$$
+$\dfrac{\partial{\phi}}{\partial{\tau}}+\mathbf{u} \cdot \nabla \phi = 1$
 
-$$\tau$$ is pseudo-time, because it is not physics simulation but more like a geometric postprocessing.
+$\tau$ is pseudo-time, because it is not physics simulation but more like a geometric postprocessing.
 
-If source term in right hand side is 0, it means $$\phi$$ is only carried by the vector field $$\mathbf{u}$$. If a constant $$c$$ is assigned, it means $$c$$ is added to $$\phi$$ when it travels one distance unit along $$\mathbf{u}$$.
+If source term in right hand side is 0, it means $\phi$ is only carried by the vector field $\mathbf{u}$. If a constant $c$ is assigned, it means $c$ is added to $\phi$ when it travels one distance unit along $\mathbf{u}$.
 
-Thus, setting the right-hand side to 1 means we will assign the traveled distance to $$\phi$$.
+Thus, setting the right-hand side to 1 means we will assign the traveled distance to $\phi$.
 
-We have discuss the gredient of $$\phi$$ before, we know that if we assign $$\phi$$ as distance, then the gredient is 1, it means when $$\phi$$ travels one distance unit in space along the steepest direction, the value of $$\phi$$ increase 1.
+We have discuss the gredient of $\phi$ before, we know that if we assign $\phi$ as distance, then the gredient is 1, it means when $\phi$ travels one distance unit in space along the steepest direction, the value of $\phi$ increase 1.
 
-So if we assign gredient of $$\phi$$ as direction of reinitializing velocity, then the advection equation will fit its physical meaning.
+So if we assign gredient of $\phi$ as direction of reinitializing velocity, then the advection equation will fit its physical meaning.
  
 In other word, substitute
 
-$$\mathbf{u} = \dfrac{\nabla \phi}{\vert \nabla \phi \vert}$$
+$\mathbf{u} = \dfrac{\nabla \phi}{\vert \nabla \phi \vert}$
 
 into advection equation, get
 
-$$\dfrac{\partial{\phi}}{\partial{\tau}}+\dfrac{\nabla \phi}{\vert \nabla \phi \vert} \cdot \nabla \phi = 1$$
+$\dfrac{\partial{\phi}}{\partial{\tau}}+\dfrac{\nabla \phi}{\vert \nabla \phi \vert} \cdot \nabla \phi = 1$
 
 which can be further simplified to 
 
-$$\dfrac{\partial{\phi}}{\partial{\tau}}+(\vert \nabla \phi \vert - 1) = 0$$
+$\dfrac{\partial{\phi}}{\partial{\tau}}+(\vert \nabla \phi \vert - 1) = 0$
 
-Reinitialize outward from the surface, the direction is the same as the gradient, $$\mathbf{u} = \dfrac{\nabla \phi}{\vert \nabla \phi \vert}$$.
+Reinitialize outward from the surface, the direction is the same as the gradient, $\mathbf{u} = \dfrac{\nabla \phi}{\vert \nabla \phi \vert}$.
 
-On the contrary, reinitialize inward from the surface, we have $$\mathbf{u} = -\dfrac{\nabla \phi}{\vert \nabla \phi \vert}$$. Similarly, we have
+On the contrary, reinitialize inward from the surface, we have $\mathbf{u} = -\dfrac{\nabla \phi}{\vert \nabla \phi \vert}$. Similarly, we have
 
-$$\dfrac{\partial{\phi}}{\partial{\tau}}-(\vert \nabla \phi \vert - 1) = 0$$
+$\dfrac{\partial{\phi}}{\partial{\tau}}-(\vert \nabla \phi \vert - 1) = 0$
 
 In summary, reinitializing equation is
 
-$$\dfrac{\partial{\phi}}{\partial{\tau}}+sign(\phi)(\vert \nabla \phi \vert - 1) = 0$$
+$\dfrac{\partial{\phi}}{\partial{\tau}}+sign(\phi)(\vert \nabla \phi \vert - 1) = 0$
 
 #### Medial Axis
 
@@ -531,19 +517,19 @@ SDF is smooth everywhere except on the medial axis
 
 The medial axis is exactly where there isn't a unique closest point, such as the center of a sphere and the middle plane inside a flat slab.
 
-Discussion about the gradient $$\nabla \phi(x)$$ breaks down on the medial axis, because the function isn't differentiable there.
+Discussion about the gradient $\nabla \phi(x)$ breaks down on the medial axis, because the function isn't differentiable there.
 
 #### Discretizing Signed Distance Functions
 
 Level set method: signed distance function that has been sampled on a grid
 
-How to get $$\dfrac{\partial{\phi}}{\partial{x}}$$ at any point? There are two ways:
+How to get $\dfrac{\partial{\phi}}{\partial{x}}$ at any point? There are two ways:
 
-1. Interpolate $$\phi$$ nearby the given point, then differentiate the interpolant of $$\phi$$
+1. Interpolate $\phi$ nearby the given point, then differentiate the interpolant of $\phi$
 
-2. Differentiate $$\phi$$ at the grid point nearby the given point, then interpolate between $$\dfrac{\partial{\phi}}{\partial{x}}$$ which lie in grid.
+2. Differentiate $\phi$ at the grid point nearby the given point, then interpolate between $\dfrac{\partial{\phi}}{\partial{x}}$ which lie in grid.
 
-Usually use thel later way, because if interpolate first, interpolant of $$\phi$$ may have discontinuities in their derivative between grid cells.
+Usually use thel later way, because if interpolate first, interpolant of $\phi$ may have discontinuities in their derivative between grid cells.
 
 #### Computing Signed Distance
 
@@ -551,7 +537,7 @@ Usually use thel later way, because if interpolate first, interpolant of $$\phi$
 
     geometry is explicitly known
 
-2. from PDEs (solving the Eikonal equation $$\vert\vert \nabla \phi(x) \vert\vert = 1$$).
+2. from PDEs (solving the Eikonal equation $\vert\vert \nabla \phi(x) \vert\vert = 1$).
 
     geometry isn't explicitly known
 
@@ -690,38 +676,36 @@ Assume we are computing the distance between point pe and triangle Te. Firstly, 
 
 ### Project
 
-To solve $$\frac{\mathrm{D}\mathbf{u}}{\mathrm{D}t}+\frac{1}{\rho}\nabla p=0$$, use forward euler:
+To solve $\frac{\mathrm{D}\mathbf{u}}{\mathrm{D}t}+\frac{1}{\rho}\nabla p=0$, use forward euler:
 
-$$\mathbf{u}_{n+1} = \mathbf{u} - \Delta t \dfrac{1}{\rho}\nabla p$$
+$\mathbf{u}_{n+1} = \mathbf{u} - \Delta t \dfrac{1}{\rho}\nabla p$
 
 The solving result should met divergence-free condition:
 
-$$\nabla\cdot\mathbf{u}^{n+1}=0$$
+$\nabla\cdot\mathbf{u}^{n+1}=0$
 
 These two equations should be combined to solve pressure, we will see how to discrete them next, and how to substitute one into another.
 
 For the first equation:
 
-$$u_{i+1/2,j,k}^{n+1}=u_{i+1/2,j,k}-\Delta t \dfrac{1}{\rho} \dfrac{p_{i+1,j,k}-p_{i,j,k}}{\Delta x}$$
+$u_{i+1/2,j,k}^{n+1}=u_{i+1/2,j,k}-\Delta t \dfrac{1}{\rho} \dfrac{p_{i+1,j,k}-p_{i,j,k}}{\Delta x}$
 
-$$v_{i,j+1/2,k}^{n+1}=v_{i,j+1/2,k}-\Delta t \dfrac{1}{\rho} \dfrac{p_{i,j+1,k}-p_{i,j,k}}{\Delta y}$$
+$v_{i,j+1/2,k}^{n+1}=v_{i,j+1/2,k}-\Delta t \dfrac{1}{\rho} \dfrac{p_{i,j+1,k}-p_{i,j,k}}{\Delta y}$
 
-$$w_{i,j,k+1/2}^{n+1}=w_{i,j,k+1/2}-\Delta t \dfrac{1}{\rho} \dfrac{p_{i,j,k+1}-p_{i,j,k}}{\Delta z}$$
+$w_{i,j,k+1/2}^{n+1}=w_{i,j,k+1/2}-\Delta t \dfrac{1}{\rho} \dfrac{p_{i,j,k+1}-p_{i,j,k}}{\Delta z}$
 
 For the second equation:
 
-$$\dfrac{u^{n+1}_{i+1/2,j,k}-u^{n+1}_{i-1/2,j,k}}{\Delta x} + \dfrac{v^{n+1}_{i,j+1/2,k}-v^{n+1}_{i,j-1/2,k}}{\Delta y} + \dfrac{w^{n+1}_{i,j,k+1/2}-w^{n+1}_{i,j,k-1/2}}{\Delta z} = 0$$
+$\dfrac{u^{n+1}_{i+1/2,j,k}-u^{n+1}_{i-1/2,j,k}}{\Delta x} + \dfrac{v^{n+1}_{i,j+1/2,k}-v^{n+1}_{i,j-1/2,k}}{\Delta y} + \dfrac{w^{n+1}_{i,j,k+1/2}-w^{n+1}_{i,j,k-1/2}}{\Delta z} = 0$
 
-Assume $$\Delta x = \Delta y = \Delta z$$, substitute the $$u^{n+1},v^{n+1},w^{n+1}$$:
+Assume $\Delta x = \Delta y = \Delta z$, substitute the $u^{n+1},v^{n+1},w^{n+1}$:
 
-$$
-\begin{align*}
+$\begin{align*}
    & \dfrac{\Delta t}{\rho\Delta x^2}(6p_{i,j,k}-p_{i+1,j,k}-p_{i,j+1,k}-p_{i,j,k+1}-p_{i-1,j,k}-p_{i,j-1,k}-p_{i,j,k-1}) = \\
     & -(\dfrac{u_{i+1/2,j,k}-u_{i-1/2,j,k}}{\Delta x} + \dfrac{v_{i,j+1/2,k}-v_{i,j-1/2,k}}{\Delta x} + \dfrac{w_{i,j,k+1/2}-w_{i,j,k-1/2}}{\Delta x})
-\end{align*}
-$$
+\end{align*}$
 
-This equation can be written in matrix form as $$Ap=b$$. It is easy to know that A is a sparse matrix. 
+This equation can be written in matrix form as $Ap=b$. It is easy to know that A is a sparse matrix. 
 
 This system of linear algebraic equations can be solved using direct or iterative methods. 
 
@@ -735,29 +719,29 @@ When actually constructing Poisson's equation, boundary conditions also need to 
 >
 > So that is why each elements in forward Euler can be calcuated parallelly, but each elements in backward Euler are coupled. In forward Euler, if you want to predict a point, you only need to fetch its neighbor points' old value. These old value are read-only. But in backward Euler, to update a point, the neighbor you fetch is also required to be writed when updating other points.
 >
-> Elements are coupled means that you should solve a $$Ax=b$$ problem.
+> Elements are coupled means that you should solve a $Ax=b$ problem.
 >
-> As for pressure solving, The forward-style method would take the current density error to compute pressure. So, in backward sense, we would deduce the pressure by saying that this still-unknown pressure will make the density error to zero. The zero density error means that the density should remain constant, and that leads to $$\nabla\cdot\mathbf{u}^{n+1}=0$$
+> As for pressure solving, The forward-style method would take the current density error to compute pressure. So, in backward sense, we would deduce the pressure by saying that this still-unknown pressure will make the density error to zero. The zero density error means that the density should remain constant, and that leads to $\nabla\cdot\mathbf{u}^{n+1}=0$
 >
-> So it is natural to substitute $$\mathbf{u}_{n+1} = \mathbf{u} - \Delta t \dfrac{1}{\rho}\nabla p$$ into $$\nabla\cdot\mathbf{u}^{n+1}=0$$.
+> So it is natural to substitute $\mathbf{u}_{n+1} = \mathbf{u} - \Delta t \dfrac{1}{\rho}\nabla p$ into $\nabla\cdot\mathbf{u}^{n+1}=0$.
 
 ### Why is it called projection?
 
-According to Helmholtz-Hodge Decomposition, states that any vector field $$\mathrm{\mathbf{w}}$$ can uniquely be decomposed into a divergence-free vector field adding with a gredient of a scalar field.
+According to Helmholtz-Hodge Decomposition, states that any vector field $\mathrm{\mathbf{w}}$ can uniquely be decomposed into a divergence-free vector field adding with a gredient of a scalar field.
 
-$$\mathrm{\mathbf{w}} = \mathrm{\mathbf{u}} + \nabla q.$$
+$\mathrm{\mathbf{w}} = \mathrm{\mathbf{u}} + \nabla q.$
 
-Where $$\nabla \cdot \mathrm{\mathbf{u}} = 0$$.
+Where $\nabla \cdot \mathrm{\mathbf{u}} = 0$.
 
-Poisson equation can be derived from this equation by multiplying both sides by "$$\nabla$$".
+Poisson equation can be derived from this equation by multiplying both sides by "$\nabla$".
 
-$$\nabla \cdot \mathrm{\mathbf{w}} = \nabla^2 q.$$
+$\nabla \cdot \mathrm{\mathbf{w}} = \nabla^2 q.$
 
 So now we can say the Poisson eq is equivalent to Helmholtz-Hodge Decomposition, while the Helmholtz-Hodge Decomposition can be written as projection:
 
-$$\mathrm{\mathbf{u}} = \mathrm{\mathbf{P}} \mathrm{\mathbf{w}} = \mathrm{\mathbf{w}} - \nabla q.$$
+$\mathrm{\mathbf{u}} = \mathrm{\mathbf{P}} \mathrm{\mathbf{w}} = \mathrm{\mathbf{w}} - \nabla q.$
 
-Where $$\mathrm{\mathbf{P}}$$ satisfies $$\mathrm{\mathbf{P}} \mathrm{\mathbf{u}} = \mathrm{\mathbf{u}}$$, $$\mathrm{\mathbf{P}} \nabla q = 0$$.
+Where $\mathrm{\mathbf{P}}$ satisfies $\mathrm{\mathbf{P}} \mathrm{\mathbf{u}} = \mathrm{\mathbf{u}}$, $\mathrm{\mathbf{P}} \nabla q = 0$.
 
 So you can see, solving Poisson eq is projecting velocity field to pressure field.
 
@@ -772,11 +756,11 @@ If you don't project velocity field to pressure filed, only solve the divergence
 
 Take 2D as an example,
 
-we need to accomplish $$\dfrac{u^{n+1}_{i+1/2,j,k}-u^{n+1}_{i-1/2,j,k}}{\Delta x} + \dfrac{v^{n+1}_{i,j+1/2,k}-v^{n+1}_{i,j-1/2,k}}{\Delta y} = 0$$.
+we need to accomplish $\dfrac{u^{n+1}_{i+1/2,j,k}-u^{n+1}_{i-1/2,j,k}}{\Delta x} + \dfrac{v^{n+1}_{i,j+1/2,k}-v^{n+1}_{i,j-1/2,k}}{\Delta y} = 0$.
 
 It can be shorten as:
 
-$$u_{i+1/2,j,k}-u_{i-1/2,j,k} + v_{i,j+1/2,k}-v_{i,j-1/2,k} = 0$$
+$u_{i+1/2,j,k}-u_{i-1/2,j,k} + v_{i,j+1/2,k}-v_{i,j-1/2,k} = 0$
 
 A quick way is calculating the difference, and distribute it onto the four velocity.
 
@@ -801,7 +785,7 @@ But there isn't flux from wall or to wall, so things change:
 
 ##### Boolean flag
 
-Set $$s = 1$$ represent fluid, $$s = 0$$ represent wall.
+Set $s = 1$ represent fluid, $s = 0$ represent wall.
 
 ```python
 d = u[i+1][j] - u[i][j] + v[i][j+1] - v[i][j]
@@ -832,7 +816,7 @@ while velocity field doesn't converge:
 
 ##### Copying value
 
-Set $$s = 0$$ for border cells is one method, another method is copying neighbor fluid cell value to border cell.
+Set $s = 0$ for border cells is one method, another method is copying neighbor fluid cell value to border cell.
 
 #### Drift problem
 
@@ -857,7 +841,7 @@ There are two solutions.
 
 One is checking collision of all particles pairs. Obviously, it is very slow.
 
-Another is computing particles density $$d$$ at the center of each cell.
+Another is computing particles density $d$ at the center of each cell.
 
 ```python
 clear rho for all particles
@@ -905,13 +889,13 @@ Still from view of signal processing technology, minified field increase the fre
 
 #### Velocity Field without Distortion 
 
-Even for a pure translation velocity field with no distortion, the Nyquist limit essentially means that, the maximum spatial frequency that can be reliably advected has period $$4 \Delta x$$.
+Even for a pure translation velocity field with no distortion, the Nyquist limit essentially means that, the maximum spatial frequency that can be reliably advected has period $4 \Delta x$.
 
-> The book says $$4 \Delta x$$? Does it should be $$2 \Delta x$$?
+> The book says $4 \Delta x$? Does it should be $2 \Delta x$?
 
-Higher-frequency signals, even though you might resolve them on the grid at a particular instant in time, cannot be handled in general: e.g., just in one dimension the highest-frequency component you can see on the grid, $$\cos{\pi x / \Delta x}$$, exactly disappears from the grid once you advect it by a distance of $$1/2 \Delta x$$.
+Higher-frequency signals, even though you might resolve them on the grid at a particular instant in time, cannot be handled in general: e.g., just in one dimension the highest-frequency component you can see on the grid, $\cos{\pi x / \Delta x}$, exactly disappears from the grid once you advect it by a distance of $1/2 \Delta x$.
 
-> Why highest-frequency component of 1D is $$\cos{\pi x / \Delta x}$$? Why it disappears by a distance of $$1/2 \Delta x$$?
+> Why highest-frequency component of 1D is $\cos{\pi x / \Delta x}$? Why it disappears by a distance of $1/2 \Delta x$?
 
 #### Eulerian scheme filtering ability
 
@@ -929,7 +913,7 @@ A "perfect" Eulerian scheme would filter out the high-frequency components that 
 
 #### Why DNS works well
 
-At small enough length scales, viscosity and other molecular diffusion processes end up dominating advection. That means, : if $$\Delta x$$ is small enough, Eulerian schemes can behave perfectly well since the physics itself is effectively bandlimiting everything, dissipating information at higher frequencies.
+At small enough length scales, viscosity and other molecular diffusion processes end up dominating advection. That means, : if $\Delta x$ is small enough, Eulerian schemes can behave perfectly well since the physics itself is effectively bandlimiting everything, dissipating information at higher frequencies.
 
 That is why DNS works well.
 
@@ -937,7 +921,7 @@ But it is expensive for compute graphics.
 
 #### Adaptive Grids
 
-We have known that if $$\Delta x$$ is smaller, the Eulerian scheme will filter higher frequencies and keep higher bandwidth of low frequencies.
+We have known that if $\Delta x$ is smaller, the Eulerian scheme will filter higher frequencies and keep higher bandwidth of low frequencies.
 
 So adaptive grids can be used, where the grid resolution is increased wherever higher resampling density is required to avoid information loss, and decreased where the field is smooth enough that low resolution suffices.
 
@@ -967,14 +951,12 @@ second-order Runge-Kutta
 
 three-stage third-order Runge-Kutta scheme
 
-$$
-\begin{align}
+$\begin{align}
     k_1 &= u(x_n), \\
     k_2 &= u(x_n + \dfrac{1}{2}\Delta t k_1), \\
     k_3 &= u(x_n + \dfrac{3}{4}\Delta t k_2), \\
     x_{n+1} &= x_n + \dfrac{2}{9}\Delta t k_1 + \dfrac{3}{9}\Delta t k_2 + \dfrac{4}{9}\Delta t k_3.
-\end{align}
-$$
+\end{align}$
 
 ### Transferring Particles to the Grid
 
@@ -1014,7 +996,7 @@ For 2D, bilinear interpolation
 
 For 3D, trilinear interpolation
 
-Caution: For 2D as an example, if one grid velocity is undefined (the cell is not fluid), then in your bilinear interpolation, you only average three points. In other word, if $$q_4$$ is undefined, then right calcuation is $$q_p = \dfrac{q_1 + q_2 + q_3}{w_1 + w_2 + w_3}$$ but not $$q_p = \dfrac{q_1 + q_2 + q_3 + 0}{w_1 + w_2 + w_3 + w_4}$$.
+Caution: For 2D as an example, if one grid velocity is undefined (the cell is not fluid), then in your bilinear interpolation, you only average three points. In other word, if $q_4$ is undefined, then right calcuation is $q_p = \dfrac{q_1 + q_2 + q_3}{w_1 + w_2 + w_3}$ but not $q_p = \dfrac{q_1 + q_2 + q_3 + 0}{w_1 + w_2 + w_3 + w_4}$.
 
 Because undefined is not 0.
 
@@ -1072,15 +1054,15 @@ Each increment is smoothed because of interpolation, of course, but that is all.
 
 1. Velocity from particles to grids
 
-    It stores a set of quantity $$q$$
+    It stores a set of quantity $q$
 
 2. Solve Advection in Grid
  
-    It stores a set of updated quantity $$q_{new}$$
+    It stores a set of updated quantity $q_{new}$
 
-3. Get delta quantity $$\Delta q = q_{new} - q$$ in Grid
+3. Get delta quantity $\Delta q = q_{new} - q$ in Grid
 
-4. Interpolate $$\Delta q$$ back from grid to particles
+4. Interpolate $\Delta q$ back from grid to particles
 
 5. Advect particles by the interpolated grid velocity field
 
@@ -1134,11 +1116,11 @@ Blobbies
 
 J. Blinn. A generalization of algebraic surface drawing. ACM Trans. Graph., 1(3):235–256, 1982
 
-$$F(x) = \sum_{i}{k(\dfrac{\vert\vert x - x_i\vert\vert}{h})}$$
+$F(x) = \sum_{i}{k(\dfrac{\vert\vert x - x_i\vert\vert}{h})}$
 
-$$k(s) = \left\{\begin{align*} {(1-s^2)}^3, s < 1 \\ 0, s \geqslant 1. \end{align*}\right.$$
+$k(s) = \left\{\begin{align*} {(1-s^2)}^3, s < 1 \\ 0, s \geqslant 1. \end{align*}\right.$
 
-The blobby surface is implicitly defined as the points $$x$$ where $$F(x) = \tau$$
+The blobby surface is implicitly defined as the points $x$ where $F(x) = \tau$
 
 The blobby surface looks blobby. If using smoothing to mask blobby artifacts, the smoothing will also mask small-scale features.
 
@@ -1164,19 +1146,19 @@ Combination:
 
 1. From the particles, construct the level set for the liquid.
 
-2. Transfer velocity (and any other additional state) from particles to the grid, and extrapolate from known grid values to at least one grid cell around the fluid, giving a preliminary velocity field $$u^*$$
+2. Transfer velocity (and any other additional state) from particles to the grid, and extrapolate from known grid values to at least one grid cell around the fluid, giving a preliminary velocity field $u^*$
 
 3. Add body forces such as gravity or artistic controls to the velocity field.
 
 4. Construct solid level sets and solid velocity fields.
 
-5. Solve for and apply pressure to get a divergence-free velocity $$u^{n+1}$$ that respects the solid boundaries.
+5. Solve for and apply pressure to get a divergence-free velocity $u^{n+1}$ that respects the solid boundaries.
 
-6. Update particle velocities by interpolating the grid update $$u^{n+1} - u^*$$ to add to the existing particle velocities (FLIP), or simply interpolating the grid velocity (PIC), or a mix thereof.
+6. Update particle velocities by interpolating the grid update $u^{n+1} - u^*$ to add to the existing particle velocities (FLIP), or simply interpolating the grid velocity (PIC), or a mix thereof.
 
-7. Advect the particles through the divergence-free velocity field $$u^{n+1}$$
+7. Advect the particles through the divergence-free velocity field $u^{n+1}$
 
-> The final step should be advecting the particels through particles velocity? Instead of divergence-free velocity in grid? Or the "divergence-free velocity $$u^{n+1}$$" means velocity in particles?
+> The final step should be advecting the particels through particles velocity? Instead of divergence-free velocity in grid? Or the "divergence-free velocity $u^{n+1}$" means velocity in particles?
 
 #### Why we need More Accurate Pressure Solves: Voxelized Surface
 
@@ -1192,42 +1174,42 @@ So we need to inform the pressure solver about the location of the water-air int
 
 > We modify pressure solver and add an additional process about water-air interface?
 >
-> OK. See the ghost fluid method section, I realize it is about how to determine $$p = 0$$ location.
+> OK. See the ghost fluid method section, I realize it is about how to determine $p = 0$ location.
 
 #### Ghost fluid Method
 
 Assume that we have known that how to update velocity:
 
-$$u_{i+1/2,j,k}^{n+1} = u_{i+1/2,j,k} - \dfrac{\Delta t}{\rho_{i+1/2,j,k}}\dfrac{p_{i+1,j,k}-p_{i,j,k}}{\Delta x}$$
+$u_{i+1/2,j,k}^{n+1} = u_{i+1/2,j,k} - \dfrac{\Delta t}{\rho_{i+1/2,j,k}}\dfrac{p_{i+1,j,k}-p_{i,j,k}}{\Delta x}$
 
-Suppose that $$(i,j,k)$$ is in the water, i.e. $$\phi_{i,j,k} \leqslant 0$$ and $$(i+1,j,k)$$ is in the air, i.e. $$\phi_{i+1,j,k} > 0$$.
+Suppose that $(i,j,k)$ is in the water, i.e. $\phi_{i,j,k} \leqslant 0$ and $(i+1,j,k)$ is in the air, i.e. $\phi_{i+1,j,k} > 0$.
 
-Simple solver, which causes voxelized surface, set $$p_{i+1,j,k} = 0$$.
+Simple solver, which causes voxelized surface, set $p_{i+1,j,k} = 0$.
 
-But it would be more accurate to say that $$p = 0$$ happens at the water-air interface, and $$(i+1,j,k)$$ doesn't represent interface.
+But it would be more accurate to say that $p = 0$ happens at the water-air interface, and $(i+1,j,k)$ doesn't represent interface.
 
-So we set a $$p^G_{i+1,j,k}$$ to present the "ghost" pressure in the air. Now the update is:
+So we set a $p^G_{i+1,j,k}$ to present the "ghost" pressure in the air. Now the update is:
 
-$$u_{i+1/2,j,k}^{n+1} = u_{i+1/2,j,k} - \dfrac{\Delta t}{\rho_{i+1/2,j,k}}\dfrac{p^G_{i+1,j,k}-p_{i,j,k}}{\Delta x}$$
+$u_{i+1/2,j,k}^{n+1} = u_{i+1/2,j,k} - \dfrac{\Delta t}{\rho_{i+1/2,j,k}}\dfrac{p^G_{i+1,j,k}-p_{i,j,k}}{\Delta x}$
 
-Now we should solve the unknown $$p^G_{i+1,j,k}$$, we know we should use the water-air interface condition that:
+Now we should solve the unknown $p^G_{i+1,j,k}$, we know we should use the water-air interface condition that:
 
-$$(1-\theta)p_{i,j,k}+\theta p^G_{i+1,j,k} = 0$$
+$(1-\theta)p_{i,j,k}+\theta p^G_{i+1,j,k} = 0$
 
-Where $$\theta$$ means we do linearly interpolating between $$\phi_{i,j,k}$$ and $$\phi_{i+1,j,k}$$ gives the location of the interface at $$(i + \theta \Delta x, j, k)$$ where
+Where $\theta$ means we do linearly interpolating between $\phi_{i,j,k}$ and $\phi_{i+1,j,k}$ gives the location of the interface at $(i + \theta \Delta x, j, k)$ where
 
-$$\theta = \dfrac{\phi_{i,j,k}}{\phi_{i,j,k} - \phi_{i+1,j,k}}$$
+$\theta = \dfrac{\phi_{i,j,k}}{\phi_{i,j,k} - \phi_{i+1,j,k}}$
 
-Solve $$p^G_{i+1,j,k}$$:
+Solve $p^G_{i+1,j,k}$:
 
-$$p^G_{i+1,j,k} = \dfrac{(\theta-1)p_{i,j,k}}{\theta}$$
+$p^G_{i+1,j,k} = \dfrac{(\theta-1)p_{i,j,k}}{\theta}$
 
 and then substitute it into update eq:
 
-$$\begin{align*}
+$\begin{align*}
 u_{i+1/2,j,k}^{n+1} & = u_{i+1/2,j,k} - \dfrac{\Delta t}{\rho_{i+1/2,j,k}}\dfrac{\dfrac{(\theta-1)p_{i,j,k}}{\theta}-p_{i,j,k}}{\Delta x} \\
 & = u_{i+1/2,j,k} + \dfrac{\Delta t}{\rho}\dfrac{1}{\theta}\dfrac{p_{i,j,k}}{\Delta x}
-\end{align*}$$
+\end{align*}$
 
 that is all.
 
