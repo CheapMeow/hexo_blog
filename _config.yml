@@ -105,13 +105,8 @@ deploy:
   repo: https://github.com/cheapmeow/cheapmeow.github.io.git
   branch: master
 
-markdown_it_plus:
-  highlight: true
-  html: true
-  xhtmlOut: true
-  breaks: true
-  langPrefix:
-  linkify: true
-  typographer:
-  quotes: “”‘’
-  pre_class: highlight
+markdown:
+  plugins:
+    - name: markdown-it-latex2img
+      options:
+        style: 'filter: opacity(90%);transform:scale(0.85);text-align:center;'
