@@ -19,7 +19,7 @@ Vulkan 只是屏幕坐标系和别人不一样。世界空间，view 空间的�
 
 <div style="overflow-x: scroll">
 <div style="width: 1800px">
-<img src="/images/reason_of_perspective_matrix_is_different_from_opengl/opengl_pipeline.drawio.svg"></img>
+<img src="/images/perspective_matrix_for_opengl_and_vulkan/opengl_pipeline.drawio.svg"></img>
 </div>
 </div>
 
@@ -603,6 +603,54 @@ GLM_FUNC_QUALIFIER mat<4, 4, T, defaultp> perspectiveRH_ZO(T fovy, T aspect, T z
   return Result;
 }
 ```
+
+但是如果仅仅就这么用了
+
+```cpp
+glm::vec3 forward = transfrom_comp_ptr->rotation * glm::vec3(0.0f, 0.0f, 1.0f);
+glm::mat4 view    = glm::lookAt(
+    transfrom_comp_ptr->position, transfrom_comp_ptr->position + forward, glm::vec3(0.0f, 1.0f, 0.0f));
+
+ubo_data.view       = view;
+ubo_data.projection = glm::perspectiveRH_ZO(camera_comp_ptr->field_of_view,
+                                            (float)window_size[0] / (float)window_size[1],
+                                            camera_comp_ptr->near_plane,
+                                            camera_comp_ptr->far_plane);
+ubo_data.projection[1][1] *= -1.f;
+```
+
+还会有 x 轴反转的问题
+
+这个确实……有点难以思考原因。我觉得可能还是因为反转了 z 轴的问题。
+
+于是最终还是自己抄了一个透视矩阵，其中与 `glm::perspectiveRH_ZO` 的区别就是反转了 x 轴，然后用 viewport 负高度，front 设置为 `vk::FrontFace::eCounterClockwise`
+
+```cpp
+static glm::mat4 perspective_vk(float fovy, float aspect, float zNear, float zFar)
+{
+    assert(abs(aspect - std::numeric_limits<float>::epsilon()) > static_cast<float>(0));
+
+    float const tanHalfFovy = tan(fovy / 2.0f);
+
+    glm::mat4 Result(0.0f);
+    Result[0][0] = -1.0f / (aspect * tanHalfFovy);
+    Result[1][1] = 1.0f / (tanHalfFovy);
+    Result[2][2] = zFar / (zNear - zFar);
+    Result[2][3] = -1.0f;
+    Result[3][2] = -(zFar * zNear) / (zFar - zNear);
+    return Result;
+}
+```
+
+这样是可以 work，也可以保证用的是 glm 的 view 空间，也是基于 glm 的透视矩阵改的，我觉得还 ok
+
+别人也会有类似的 x 轴翻转的问题
+
+[https://stackoverflow.com/questions/65049297/perspective-projection-inverting-x-axis-glmperspective](https://stackoverflow.com/questions/65049297/perspective-projection-inverting-x-axis-glmperspective)
+
+[https://stackoverflow.com/questions/78557339/glmlookat-image-is-visually-flipped-both-x-and-y-axis](https://stackoverflow.com/questions/78557339/glmlookat-image-is-visually-flipped-both-x-and-y-axis)
+
+但是我脑子有限不知道怎么办
 
 <script src="https://utteranc.es/client.js"
         repo="CheapMeow/cheapmeow.github.io"
