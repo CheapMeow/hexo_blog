@@ -1118,7 +1118,7 @@ J. Blinn. A generalization of algebraic surface drawing. ACM Trans. Graph., 1(3)
 
 $F(x) = \sum_{i}{k(\dfrac{\vert\vert x - x_i\vert\vert}{h})}$
 
-$k(s) = \left\{\begin{align*} {(1-s^2)}^3, s < 1 \\ 0, s \geqslant 1. \end{align*}\right.$
+$k(s) = \left\lbrace\begin{align*} {(1-s^2)}^3, s < 1 \\ 0, s \geqslant 1. \end{align*}\right.$
 
 The blobby surface is implicitly defined as the points $x$ where $F(x) = \tau$
 

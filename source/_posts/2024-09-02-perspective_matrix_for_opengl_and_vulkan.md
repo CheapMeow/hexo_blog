@@ -11,10 +11,6 @@ Vulkan 只是屏幕坐标系和别人不一样。世界空间，view 空间的�
 
 如果没有推导过投影矩阵，就可能不会理解到世界空间，view 空间的手性和 NDC 的手性可以毫无关系——毕竟你不知道有矩阵可以转换手性。
 
-<script type="text/javascript" async
-  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
-
 ## 深度的约定
 
 创建 `vk::PipelineDepthStencilStateCreateInfo` 时，我们一般会传入 `vk::CompareOp::eLessOrEqual` 到 `depthCompareOp`，表示传入的深度比存储的深度更小时，就通过了测试，写入新的深度。这就表明近处的物体会遮挡远处的物体，符合了 z 的正值越大表示深度越深的习惯。
