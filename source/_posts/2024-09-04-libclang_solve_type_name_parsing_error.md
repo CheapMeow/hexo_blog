@@ -90,6 +90,36 @@ add_custom_command(
 )
 ```
 
+exe 接受了命令行参数，存成 vector，这个比较简单可以跳过
+
+最终解析的时候要传入这些参数
+
+```cpp
+void Parser::ParseFile(const fs::path& path, const std::vector<std::string>& include_paths)
+{
+    // traverse AST to find class
+
+    CXIndex index = clang_createIndex(0, 0);
+
+    std::vector<const char*> all_args(3 + include_paths.size());
+    all_args[0] = "-xc++";
+    all_args[1] = "-std=c++20";
+    all_args[2] = "-DGLM_ENABLE_EXPERIMENTAL";
+    for (int i = 0; i < include_paths.size(); i++)
+    {
+        all_args[i + 3] = include_paths[i].c_str();
+    }
+    CXTranslationUnit unit = clang_parseTranslationUnit(
+        index, path.string().c_str(), all_args.data(), all_args.size(), nullptr, 0, CXTranslationUnit_None);
+
+    ...
+}
+```
+
+其中要注意传入的参数的数量要正确，我就犯过这样的错误
+
+不过用 `vector` 来存参数就更省心，直接取 `.size()`
+
 当然，这可能并不足以消除错误
 
 为了查看 libclang 解析单元时发生了什么错误，在 cpp 中就可以捕捉到
@@ -125,11 +155,15 @@ LibclangUtils::print_diagnostics(unit);
 
 比如根据这个 diagnostics，报错是找不到 assimp 的 `config.h`
 
+```
+fatal error: 'assimp/config.h' file not found
+```
+
 原因是这个文件是 assimp 构建时生成的。所以我简单地 include assimp 的 include 文件夹时没有用的
 
 要做的是 include 编译目标中的 assimp 源码的编译结果
 
-```
+```CMakeLists
 target_include_directories(${CODE_GENERATOR_NAME} PUBLIC ${CMAKE_BINARY_DIR}/src/3rdparty/assimp/include)
 ```
 
