@@ -209,7 +209,7 @@ footer:
 # 文章搜索
 search:
   enable: true
-  placeholder: 
+  placeholder: 搜索...
 
 # 深/浅配色切换
 colorSwitch:

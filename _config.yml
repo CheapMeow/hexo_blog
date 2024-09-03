@@ -110,3 +110,8 @@ markdown:
     - name: markdown-it-latex2img
       options:
         style: 'filter: opacity(90%);transform:scale(0.85);text-align:center;'
+
+search:
+  path: search.xml
+  field: post
+  content: true
