@@ -623,7 +623,7 @@ ubo_data.projection[1][1] *= -1.f;
 
 这个确实……有点难以思考原因。我觉得可能还是因为反转了 z 轴的问题。
 
-于是最终还是自己抄了一个透视矩阵，其中与 `glm::perspectiveRH_ZO` 的区别就是反转了 x 轴，然后用 viewport 负高度，front 设置为 `vk::FrontFace::eCounterClockwise`
+于是最终还是自己抄了一个透视矩阵，其中与 `glm::perspectiveRH_ZO` 的区别就是反转了 x 轴，然后用 viewport 负高度，front 设置为 `vk::FrontFace::eClockwise`
 
 ```cpp
 static glm::mat4 perspective_vk(float fovy, float aspect, float zNear, float zFar)
