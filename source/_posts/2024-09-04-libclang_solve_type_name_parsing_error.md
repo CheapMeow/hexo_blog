@@ -64,7 +64,7 @@ public:
 
 我的方法是，用于生成代码的 exe target 直接 include 所有主程序 target include 的第三方库，然后在 cmake 中获取这些依赖，存成字符串，例如下面代码中的 `${INCLUDE_PATH_COLLECTION}`
 
-```CMakeLists
+```cmake
 function(get_target_include_directories TARGET VAR_NAME)  
     set(INCLUDE_DIRS "")  
     get_target_property(TMP_DIRS ${TARGET} INCLUDE_DIRECTORIES)    
@@ -81,7 +81,7 @@ get_target_include_directories(${CODE_GENERATOR_NAME} INCLUDE_PATH_COLLECTION)
 
 然后再把这个获取到的字符串传入用于生成代码的 exe
 
-```CMakeLists
+```cmake
 add_custom_command(
     OUTPUT ${SRC_ROOT_DIR}/runtime/generated/register_all.cpp
     COMMAND ${CODE_GENERATOR_NAME} ${INCLUDE_PATH_COLLECTION} "-S${SRC_ROOT_DIR}/runtime" "-O${SRC_ROOT_DIR}/runtime/generated"
@@ -163,7 +163,7 @@ fatal error: 'assimp/config.h' file not found
 
 要做的是 include 编译目标中的 assimp 源码的编译结果
 
-```CMakeLists
+```cmake
 target_include_directories(${CODE_GENERATOR_NAME} PUBLIC ${CMAKE_BINARY_DIR}/src/3rdparty/assimp/include)
 ```
 
