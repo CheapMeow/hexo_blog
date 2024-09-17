@@ -194,20 +194,23 @@ The half-index notation works well for describing velocity components in this do
 
 Using staggered grid, we can get unbiased second-order accuracy of a central difference:
 
-$\begin{align*}  
+$$
+\begin{align*}  
     \left( \frac{\partial u}{\partial x} \right)_{i,\ j,\ k } \approx & \ 
     \frac{u_{i{+}1/2,\ j,\ k} - u_{i{-}1/2,\ j,\ k}}{\Delta x}, \\[1.5ex]
     \left( \frac{\partial v}{\partial y} \right)_{i,\ j,\ k } \approx & \ 
     \frac{v_{i,\ j{+}1/2,\ k} - v_{i,\ j{-}1/2,\ k}}{\Delta x}, \\[1.5ex]
     \left( \frac{\partial w}{\partial z} \right)_{i,\ j,\ k } \approx & \ 
     \frac{w_{i,\ j,\ k{+}1/2} - w_{i,\ j,\ k{-}1/2}}{\Delta x}
-\end{align*}$
+\end{align*}
+$$
 
 The staggered MAC grid is perfectly suited for handling pressure and incompressibility, but it's frankly a pain for other uses. For example, if we actually want to evaluate the full velocity vector somewhere, we will always need to use some kind of interpolation even if we're looking at a grid point.
 
 For an arbitrary location:
 
-$\begin{align}
+$$
+\begin{align}
     \vec{u}_{i,\ j,\ k}\ = & \  \left( \frac{u_{i{-}1/2,\ j,\ k} + u_{i{+}1/2,\ j,\ k}}{2}, \ 
     \frac{v_{i,\ j{-}1/2,\ k} + v_{i,\ j{+}1/2,\ k}}{2}, \ 
     \frac{w_{i,\ j,\ k{-}1/2} + w_{i,\ j,\ k{+}1/2}}{2} 
@@ -245,7 +248,8 @@ $\begin{align}
     \end{align}}{4}, \ 
     w_{i,\ j,\ k{+}1/2}
     \right) \\[1.5ex]
-\end{align}$
+\end{align}
+$$
 
 ### Dynamic Sparse Grids
 
@@ -376,12 +380,14 @@ Solution: use sharper interpolation
 
 Cubic Interpolation:
 
-$\begin{align}
+$$
+\begin{align}
     f(q_{i-1},\ q_{i},\ q_{i+1},\ q_{i+2},\ x) = \ &[-\dfrac{1}{3}s+\dfrac{1}{2}s^2-\dfrac{1}{6}s^3]q_{i-1} \\
     &+ [1-s^2+\dfrac{1}{2}(s^3-s)]q_{i} \\
     &+ [s+\dfrac{1}{2}(s^2-s^3)]q_{i+1} \\
     &+ [\dfrac{1}{6}(s^3-s)]q_{i+2}
-\end{align}$
+\end{align}
+$$
 
 Where $s$ means fraction between grid points $x_i$ and $x_{i+1}$. So $s=-1$ means $x_{i-1}$, $s=0$ means $x_{i}$, $s=1$ means $x_{i+1}$, $s=2$ means $x_{i+2}$.
 
@@ -389,12 +395,14 @@ It can be derived from Lagrange Interpolation, base point are $(-1, q_{i-1})$, $
 
 This algorithm also has another form. Derived from another way [Paul Bourke's Cubic Interpolation Page](http://www.paulinternet.nl/?page=bicubic)
 
-$\begin{align}
+$$
+\begin{align}
     f(p_0,\ p_1,\ p_2,\ p_3,\ x) = \ &(-\tfrac{1}{2}p_0 + \tfrac{3}{2}p_1 - \tfrac{3}{2}p_2 + \tfrac{1}{2}p_3)x^3 \\
     &+ (p_0 - \tfrac{5}{2}p_1 + 2p_2 - \tfrac{1}{2}p_3)x^2 \\
     &+ (-\tfrac{1}{2}p_0 + \tfrac{1}{2}p_2)x \\
     &+ p_1
-\end{align}$
+\end{align}
+$$
 
 Where $x$ is same as $s$ below.
 
@@ -700,10 +708,12 @@ $\dfrac{u^{n+1}_{i+1/2,j,k}-u^{n+1}_{i-1/2,j,k}}{\Delta x} + \dfrac{v^{n+1}_{i,j
 
 Assume $\Delta x = \Delta y = \Delta z$, substitute the $u^{n+1},v^{n+1},w^{n+1}$:
 
-$\begin{align*}
+$$
+\begin{align*}
    & \dfrac{\Delta t}{\rho\Delta x^2}(6p_{i,j,k}-p_{i+1,j,k}-p_{i,j+1,k}-p_{i,j,k+1}-p_{i-1,j,k}-p_{i,j-1,k}-p_{i,j,k-1}) = \\
     & -(\dfrac{u_{i+1/2,j,k}-u_{i-1/2,j,k}}{\Delta x} + \dfrac{v_{i,j+1/2,k}-v_{i,j-1/2,k}}{\Delta x} + \dfrac{w_{i,j,k+1/2}-w_{i,j,k-1/2}}{\Delta x})
-\end{align*}$
+\end{align*}
+$$
 
 This equation can be written in matrix form as $Ap=b$. It is easy to know that A is a sparse matrix. 
 
@@ -951,12 +961,14 @@ second-order Runge-Kutta
 
 three-stage third-order Runge-Kutta scheme
 
-$\begin{align}
+$$
+\begin{align}
     k_1 &= u(x_n), \\
     k_2 &= u(x_n + \dfrac{1}{2}\Delta t k_1), \\
     k_3 &= u(x_n + \dfrac{3}{4}\Delta t k_2), \\
     x_{n+1} &= x_n + \dfrac{2}{9}\Delta t k_1 + \dfrac{3}{9}\Delta t k_2 + \dfrac{4}{9}\Delta t k_3.
-\end{align}$
+\end{align}
+$$
 
 ### Transferring Particles to the Grid
 
@@ -1206,10 +1218,12 @@ $p^G_{i+1,j,k} = \dfrac{(\theta-1)p_{i,j,k}}{\theta}$
 
 and then substitute it into update eq:
 
-$\begin{align*}
+$$
+\begin{align*}
 u_{i+1/2,j,k}^{n+1} & = u_{i+1/2,j,k} - \dfrac{\Delta t}{\rho_{i+1/2,j,k}}\dfrac{\dfrac{(\theta-1)p_{i,j,k}}{\theta}-p_{i,j,k}}{\Delta x} \\
 & = u_{i+1/2,j,k} + \dfrac{\Delta t}{\rho}\dfrac{1}{\theta}\dfrac{p_{i,j,k}}{\Delta x}
-\end{align*}$
+\end{align*}
+$$
 
 that is all.
 
