@@ -30,3 +30,10 @@ tags:
 
 ## 使用 libclang 解析 AST，获取所需信息
 
+<script src="https://utteranc.es/client.js"
+        repo="CheapMeow/cheapmeow.github.io"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
