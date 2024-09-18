@@ -104,7 +104,7 @@ $$
 
 This is also the pressure Poisson equation
 
-Discretized as
+Taking two dimensions as an example, the pressure Poisson equation is discretized
 
 $$
 \frac{u_{i+1,j}-u_{i-1,j}}{2\Delta x} + \frac{v_{i,j+1}-v_{i,j-1}}{2\Delta y} = \frac{p_{i+1,j}^{n}-2p_{i,j}^{n}+p_{i-1,j}^{n}}{\Delta x^2} + \frac{p_{i,j+1}^{n}-2p_{i,j}^{n}+p_{i,j-1}^{n}}{\Delta y^2}
