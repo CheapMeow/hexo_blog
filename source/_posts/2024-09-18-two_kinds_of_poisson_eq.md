@@ -58,10 +58,7 @@ $$
 Similarly in 2d case:
 
 $$
--{1 \over \rho} \left( {{\partial^2 p} \over {\partial x^2}} + {{\partial^2 p} \over {\partial y^2}} \right) =
- \left( {{\partial u} \over {\partial x}} \right)^2 +
-2 {{\partial u} \over {\partial y}} {{\partial v} \over {\partial x}}+
-\left( {{\partial v} \over {\partial y}} \right)^2
+-\dfrac{1}{\rho}\left(\dfrac{\partial^2{p}}{\partial{x^2}} + \dfrac{\partial^2{p}}{\partial{y^2}}\right) = \left(\dfrac{\partial{u}}{\partial{x}}\right)^2 + \left(\dfrac{\partial{v}}{\partial{y}}\right)^2 + 2\dfrac{\partial{v}}{\partial{x}}\dfrac{\partial{u}}{\partial{y}}
 $$
 
 That is pressure poisson equation.
